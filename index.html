@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课程测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .options label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .result {
+            margin-top: 10px;
+            font-weight: bold;
+            color: green;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h2>课程测试</h2>
+    <div id="quiz"></div>
+    <button onclick="submitQuiz()">提交答案</button>
+    <div id="result" class="result"></div>
+    
+    <script>
+        const questions = [
+             {
+
+            "question": "密码学的主要目标是什么？",
+
+            "options": ["确保数据的机密性", "确保数据的完整性", "确保数据的机密性、完整性和身份验证"],
+
+            "answer": 2
+
+        },
+
+        {
+
+            "question": "对称加密的定义是什么？",
+
+            "options": ["使用一对密钥进行加密和解密的算法", "使用相同的密钥进行加密和解密的算法", "使用公钥和私钥分别进行加密和解密的算法"],
+
+            "answer": 1
+
+        },
+
+        {
+
+            "question": "非对称加密的主要优点是什么？",
+
+            "options": ["速度快，效率高", "解决了密钥交换问题", "密钥可以公开传输"],
+
+            "answer": 1
+
+        },
+
+        {
+
+            "question": "AES算法属于哪种加密方式？",
+
+            "options": ["对称加密", "非对称加密", "流密码"],
+
+            "answer": 0
+
+        },
+
+        {
+
+            "question": "非对称加密的主要应用场景是什么？",
+
+            "options": ["密钥交换、数字签名", "电子邮件加密", "文件加密"],
+
+            "answer": 0
+
+        },
+
+        {
+
+            "question": "分组密码加密的工作方式是什么？",
+
+            "options": ["每次处理一个字节", "每次处理一个位", "每次处理一个固定大小的数据块"],
+
+            "answer": 2
+
+        },
+
+        {
+
+            "question": "流密码的主要优点是什么？",
+
+            "options": ["安全性高", "速度快，代码量小", "适用范围广"],
+
+            "answer": 1
+
+        },
+
+        {
+
+            "question": "流密码的适用场景是什么？",
+
+            "options": ["文件加密", "即时通讯加密", "网站通信加密"],
+
+            "answer": 1
+
+        },
+
+        {
+
+            "question": "数字签名的主要作用是什么？",
+
+            "options": ["验证数据的完整性", "验证数据来源和完整性", "加密敏感数据"],
+
+            "answer": 1
+
+        },
+
+        {
+
+            "question": "以下哪项属于对称加密的常见算法？",
+
+            "options": ["RSA", "AES", "ECDSA"],
+
+            "answer": 1
+
+        },
+
+        {
+
+            "question": "哈希函数的主要作用是什么？",
+
+            "options": ["生成数据的摘要，以验证数据的完整性", "加密数据", "生成伪随机数"],
+
+            "answer": 0
+
+        },
+
+        {
+
+            "question": "数字签名在密码学中的作用是什么？",
+
+            "options": ["保护数据的机密性", "验证数据的来源和完整性", "加密数据"],
+
+            "answer": 1
+
+        },
+
+        {
+
+            "question": "在密码学中，伪随机数生成器的主要作用是什么？",
+
+            "options": ["生成密钥", "加密明文", "生成随机数，用于密钥生成和加密算法"],
+
+            "answer": 2
+
+        },
+
+        {
+
+            "question": "以下哪项是非对称加密的缺点？",
+
+            "options": ["密钥交换问题", "速度较慢，效率较低", "不适用于数据加密"],
+
+            "answer": 1
+
+        },
+
+        {
+
+            "question": "对称加密和非对称加密的主要区别是什么？",
+
+            "options": ["对称加密使用相同的密钥进行加密和解密，而非对称加密使用一对密钥", "对称加密使用一对密钥进行加密和解密，而非对称加密使用相同的密钥", "两者都是使用相同的密钥进行加密和解密"],
+
+            "answer": 0
+
+        },
+
+        {
+
+            "question": "加密算法按操作类型分类时，以下哪项属于常见类型？",
+
+            "options": ["替换和置换", "数字签名", "哈希函数"],
+
+            "answer": 0
+
+        },
+
+        {
+
+            "question": "以下哪项加密方式适用于电子邮件加密？",
+
+            "options": ["非对称加密", "分组密码", "流密码"],
+
+            "answer": 1
+
+        }
+       ];
+
+        function renderQuiz() {
+            const quizContainer = document.getElementById("quiz");
+            quizContainer.innerHTML = "";
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.innerText = `${index + 1}. ${q.question}`;
+                quizContainer.appendChild(questionDiv);
+                
+                const optionsDiv = document.createElement("div");
+                optionsDiv.classList.add("options");
+                q.options.forEach((option, i) => {
+                    const label = document.createElement("label");
+                    const input = document.createElement("input");
+                    input.type = "radio";
+                    input.name = `question${index}`;
+                    input.value = i;
+                    label.appendChild(input);
+                    label.appendChild(document.createTextNode(option));
+                    optionsDiv.appendChild(label);
+                });
+                quizContainer.appendChild(optionsDiv);
+                
+                const explanationDiv = document.createElement("div");
+                explanationDiv.classList.add("error");
+                explanationDiv.id = `explanation${index}`;
+                quizContainer.appendChild(explanationDiv);
+            });
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name=question${index}]:checked`);
+                const explanationDiv = document.getElementById(`explanation${index}`);
+                if (selected) {
+                    if (parseInt(selected.value) === q.answer) {
+                        score++;
+                        explanationDiv.innerText = ""; // 清空错误信息
+                    } else {
+                        explanationDiv.innerText = `错误！正确答案是：${q.options[q.answer]}。${q.explanation}`;
+                    }
+                } else {
+                    explanationDiv.innerText = "请回答此问题！";
+                }
+            });
+            document.getElementById("result").innerText = `你的得分: ${score} / ${questions.length}`;
+        }
+
+        renderQuiz();
+    </script>
+</body>
+</html>
